@@ -1,0 +1,16 @@
+﻿<header>
+    <div class="row">
+        <div class="col-sm-12 col-xs-12 header-section">
+            <div class="logo-container">
+
+                <img src="../../../../../../wwwroot/content/images/logo.png" class="img-responsive" alt="Logo" />
+                <img src="../../../../../../wwwroot/content/images/login.png" *ngIf="!authenticated" (click)="logIn()" style="position:absolute;right:50px;width:75px;top: 15px;" class="img-responsive btn" />
+                <img src="../../../../../../wwwroot/content/images/logout.png" *ngIf="authenticated" (click)="logOut()" style="position:absolute;right:50px;width: 75px;top: 15px;" class="img-responsive btn" />
+                <label style="position:absolute;right:7px;top: 35px;font-size:12px !important"> {{CDSID}}</label>
+            </div>
+        </div>
+        <div class="menu-icon" (click)="function()"><i class="fa fa-bars" aria-hidden="true" id="mobile-menu"></i></div>
+    </div>
+</header>
+
+

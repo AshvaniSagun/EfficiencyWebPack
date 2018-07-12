@@ -1,0 +1,442 @@
+﻿
+<p-dataTable [value]="formuladetails" [rowStyleClass]="lookupRowStyleClass" sortField="CreatedOn" sortOrder="-1" resizableColumns="true" selectionMode="single" [(selection)]="selectedCar" [responsive]="true" [rows]="10" [rowsPerPageOptions]="[10, 20,50]" [paginator]="true" #dt>
+
+    <p-column field="FormulaPriority" header="Formula Priority " [filter]="false" [sortable]="true"></p-column>
+    <p-column field="VariableName" header="Formula Name" [filter]="false" [sortable]="false"></p-column>
+    <p-column field="FormulaDefinition" header="Formula Definition " [filter]="false" filterPlaceholder="Search" [sortable]="false"></p-column>
+    <p-column field="CreatedBy" header="Created By" [sortable]="false" [filter]="false" filterPlaceholder="Search"></p-column>
+    <p-column field="CreatedOn" header="Created On " [sortable]="false" [style]="{'width':'200px'}" [filter]="false" filterPlaceholder="Search">
+        <ng-template let-row="rowData" pTemplate="body">
+            {{row.CreatedOn | date}}
+        </ng-template>
+    </p-column>
+    <p-column field="UpdatedBy" header="Updated By " [sortable]="false" [filter]="false" filterPlaceholder="Search"></p-column>
+    <p-column field="UpdatedOn" header="Updated On" [sortable]="false" [style]="{'width':'200px'}" [filter]="false" filterPlaceholder="Search">
+        <ng-template let-row="rowData" pTemplate="body">
+            {{row.UpdatedOn | date}}
+        </ng-template>
+    </p-column>
+
+    <p-column header="Edit" [style]="{'width':'80px'}">
+        <ng-template let-col let-carT="rowData" pTemplate type="body">
+            <button class="edit" type="button" *ngIf="carT.isPublished==true" [disabled]="showeditbutton" pButton icon="fa-edit" pTooltip="edit this row" tooltipPosition="top" (click)="showDialogToEdit(carT)"></button>
+            <button class="edit" type="button" *ngIf="carT.isPublished==false" pButton icon="fa-edit" pTooltip="edit this row" tooltipPosition="top" (click)="showDialogToEdit(carT)"></button>
+
+        </ng-template>
+    </p-column>
+
+    <p-column header="TEST">
+
+        <ng-template let-col let-car="rowData" pTemplate type="body">
+            <button type="button" pButton  class="btn" style="color:#2B7BCD"  pTooltip="Test this row" tooltipPosition="top" label="Test" (click)="SendFormulaID(car)"></button>
+        </ng-template>
+
+    </p-column>
+    <p-footer>
+        <div class="ui-helper-clearfix action-btn" style="width:100%">
+            <button type="button" pButton icon="fa-plus" class="btn" style="float:left" (click)="showDialogToAdd()" label="Add Formula"></button>
+            <button type="button" pButton pTooltip="Test Root level" (click)="ClickRootlevelTest()" tooltipPosition="top" class="btn" style="float:left" label="TEST FORMULA"></button>
+
+        </div>
+    </p-footer>
+</p-dataTable>
+<div *ngIf="showprimesave==true">
+    <p-dialog header="Add Formula" [(visible)]="displayDialog" [responsive]="true" showEffect="fade" [modal]="true">
+        <div class="ui-grid ui-grid-responsive ui-fluid" *ngIf="car">
+            <form (ngSubmit)="save()" #Form="ngForm">
+                <div class="form-group">
+                    <div class="row">
+                        <div class="col-lg-5 col-md-5 col-sm-5 col-xs-12 newmarket-input"><label for="FormulaPriority">Formula Priority</label></div>
+                        <div class="col-lg-7 col-md-7 col-sm-7 col-xs-12 newmarket-inputbox">
+                            <input (keypress)="_keyPress($event)" maxlength="2" pInputText id="FormulaPriority" autocomplete="off"  placeholder="Provide Formula Priority"
+                                   [(ngModel)]="car.FormulaPriority"
+                                   class="form-control"
+                                   required
+                                   name="FormulaPriority"
+                                   #FormulaPriority="ngModel">
+                            <div [hidden]="FormulaPriority.valid || FormulaPriority.pristine"
+                                 class="">
+                                <div class="my-notify-error"
+                                     [hidden]="!FormulaPriority.hasError('required')">
+                                    FormulaPriority is required
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-lg-5 col-md-5 col-sm-5 col-xs-12 newmarket-input"><label for="VariableName">Formula Name</label></div>
+                        <div class="col-lg-7 col-md-7 col-sm-7 col-xs-12 ">
+                            <div class="styled-select">
+                                <select [(ngModel)]="car.VariableId" (ngModelChange)="getid($event)" required name="VariableId" id="VariableId" ngModel class="form-control">
+                                    <option [ngValue]="select" disabled [selected]="true">--Select Formula Name--</option>
+                                    <option *ngFor="let type of formulaname" [ngValue]="type.id">{{type.value}}</option>
+                                </select>
+                            </div>
+                        </div>
+                        </div>
+                    <div class="row">
+                        <div class="col-lg-5 col-md-5 col-sm-5 col-xs-12 newmarket-input"><label for="FormulaDefinition">Formula Definition</label></div>
+                        <div class="col-lg-7 col-md-7 col-sm-7 col-xs-12 newmarket-inputbox">
+                            <input pInputText id="FormulaDefinition" maxlength="500" autocomplete="off"  placeholder="Provide Formula Definition" [(ngModel)]="car.FormulaDefinition" class="form-control"
+                                   required
+                                   name="FormulaDefinition"
+                                   ngControl="FormulaDefinition"
+                                   #FormulaDefinition="ngModel">
+                            <div [hidden]="FormulaDefinition.valid || FormulaDefinition.pristine "
+                                 class="">
+                                <div class="my-notify-error"
+                                     [hidden]="!FormulaDefinition.hasError('required')">
+                                    FormulaDefinition is required
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <p-footer>
+                    <div class="ui-dialog-buttonpane ui-helper-clearfix">
+                        <div class="ui-helper-clearfix action-btn">
+                            <button type="button" pButton icon="fa-check" class="btn" (click)="save(car)" label="Save" [disabled]="!Form.form.valid"></button>
+                        </div>
+                    </div>
+                </p-footer>
+            </form>
+        </div>
+    </p-dialog>
+</div>
+<div *ngIf="showprimeupdate==true">
+    <p-dialog header="Update or Delete Formula" [(visible)]="displayDialog" [responsive]="true" showEffect="fade" [modal]="true">
+        <div class="ui-grid ui-grid-responsive ui-fluid" *ngIf="car">
+            <form (ngSubmit)="update()" #Form="ngForm">
+                <div class="form-group">
+                    <div class="row">
+                        <div class="col-lg-5 col-md-5 col-sm-5 col-xs-12 newmarket-input"><label for="FormulaPriority">Formula Priority</label></div>
+                        <div class="col-lg-7 col-md-7 col-sm-7 col-xs-12 newmarket-inputbox">
+                            <input (keypress)="_keyPress($event)" maxlength="2" pInputText id="FormulaPriority" placeholder="Provide Formula Priority" 
+                                   [(ngModel)]="car.FormulaPriority"
+                                   class="form-control"
+                                   required
+                                   name="FormulaPriority"
+                                   #FormulaPriority="ngModel">
+                            <div [hidden]="FormulaPriority.valid || FormulaPriority.pristine"
+                                 class="">
+                                <div class="my-notify-error"
+                                     [hidden]="!FormulaPriority.hasError('required')">
+                                    FormulaPriority is required
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-lg-5 col-md-5 col-sm-5 col-xs-12 newmarket-input"><label for="VariableName">Formula Name</label></div>
+                        <div class="col-lg-7 col-md-7 col-sm-7 col-xs-12">
+                            <div class="styled-select">
+                                <select [(ngModel)]="car.VariableId" (ngModelChange)="getid($event)" required name="VariableId" id="VariableId" ngModel class="form-control">
+                                    <option value="" disabled selected>--Select Formula Name--</option>
+                                    <option *ngFor="let type of formulaname" [ngValue]="type.id">{{type.value}}</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                    <!--<div class="row">
+                        <div class="col-lg-5 col-md-5 col-sm-5 col-xs-12 newmarket-input"><label for="VariableName">Formula Name</label></div>
+                        <div class="col-lg-7 col-md-7 col-sm-7 col-xs-12 ">
+                            <div class="styled-select">
+                                <select [(ngModel)]="variableObject" (change)="getid($event)" required name="id" ngModel class="form-control">
+                                    <option value="" disabled selected>--Select Formula Name--</option>
+                                    <option *ngFor="let type of formulaname" [ngValue]="type">{{type.value}}</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>-->
+                    <div class="row">
+                        <div class="col-lg-5 col-md-5 col-sm-5 col-xs-12 newmarket-input"><label for="FormulaDefinition">Formula Definition</label></div>
+                        <div class="col-lg-7 col-md-7 col-sm-7 col-xs-12 newmarket-inputbox">
+                            <input pInputText id="FormulaDefinition" maxlength="500" placeholder="Provide Formula Definition" [(ngModel)]="car.FormulaDefinition" class="form-control" 
+                                   required
+                                   name="FormulaDefinition"
+                                   ngControl="FormulaDefinition"
+                                   #FormulaDefinition="ngModel">
+                            <div [hidden]="FormulaDefinition.valid || FormulaDefinition.pristine "
+                                 class="">
+                                <div class="my-notify-error"
+                                     [hidden]="!FormulaDefinition.hasError('required')">
+                                    FormulaDefinition is required
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <p-footer>
+                    <div class="ui-dialog-buttonpane ui-helper-clearfix">
+                        <div class="ui-helper-clearfix action-btn">
+                            <button type="button" pButton icon="fa-check" class="btn" (click)="update(car)" label="Update" [disabled]="!Form.form.valid"></button>
+                            <button type="button" pButton icon="fa-close" class="btn" (click)="delete(car)" label="Delete" [disabled]="!Form.form.valid"></button>
+                        </div>
+                    </div>
+                </p-footer>
+            </form>
+        </div>
+    </p-dialog>
+</div>
+<div *ngIf="showTestBox==true">
+
+    <p-dialog header="Test Formula" [(visible)]="displayDialogT" [responsive]="true" showEffect="fade" [modal]="true">
+        <div class="ui-grid ui-grid-responsive ui-fluid">
+            <form (ngSubmit)="TestClick(FormulaTestList)" #Form="ngForm">
+                <div class="form-group">
+                    <div class="row">
+                        <div class="col-lg-5 col-md-5 col-sm-5 col-xs-12 newmarket-input"><label for="FormulaPriority">Formula Definition</label></div>
+                        <div class="col-lg-7 col-md-7 col-sm-7 col-xs-12 newmarket-inputbox">
+                            <!--<label>{{FormulaTestList.formulaDefinition}}</label>-->
+                            <input type="text" value="{{FormulaTestList.formulaDefinition}}" [(ngModel)]="FormulaTestList.formulaDefinition" readonly name="fd">
+
+                        </div>
+                    </div>
+                    
+                    <div *ngFor="let variables of FormulaTestList.variableList;let i=index">
+                        <div class="row">
+                            <div class="col-lg-5 col-md-5 col-sm-5 col-xs-12 newmarket-input"><label for="Formulat">{{variables.Name}}</label></div>
+                            <div class="col-lg-7 col-md-7 col-sm-7 col-xs-12 newmarket-inputbox">
+                                <input (keypress)="_keyPressSymbols($event)" maxlength="10" type="text" value="{{variables.value}}" [(ngModel)]="variables.value" name="variables">
+
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                    <p-footer>
+                        <div class="ui-dialog-buttonpane ui-helper-clearfix">
+                            <div class="ui-helper-clearfix action-btn">
+                                <button type="button" pButton class="btn" label="TEST" (click)="TestClick(FormulaTestList)"></button>
+                            </div>
+                            <br />
+
+
+                            <div class="ui-grid-row" *ngIf="showTestResult==true">
+
+
+                                <!--<div class="ui-grid-col-4 newmarket-input"><label for="Formulat"><b>TEST RESULT:</b></label></div>
+                <div class="ui-grid-col-10 newmarket-inputbox">
+                    <b>
+                        <input type="text" value="{{TestResult}}" [(ngModel)]="TestResult" name="tr" readonly>
+
+                    </b>
+                    <label>{{TestResult}}</label>
+
+                </div>-->
+
+                                <div class="row">
+                                
+                                    <div class="col-lg-6 col-md-6 col-sm-6 col-xs-12 newmarket-input"><label for="FormulaPriority"><b>TEST RESULT</b></label></div>
+                                    <div class="col-lg-6 col-md-6 col-sm-6 col-xs-12 newmarket-inputbox">
+
+
+                                        <!--<input type="text" value="{{TestResult}}" readonly name="ftrr">-->
+                                        <label>{{TestResult}}</label>
+                                    </div>
+                                </div>
+
+
+
+
+                            </div>
+                        </div>
+                    </p-footer>
+</form>
+        </div>
+    </p-dialog>
+</div>
+
+
+<!--root level test-->
+
+<div class="testFormMob" *ngIf="rootlevel==true">
+
+    <p-dialog header="Test Formula Root Level" [(visible)]="displayDialogR" [responsive]="true" showEffect="fade" [modal]="true">
+        <div class="ui-grid ui-grid-responsive ui-fluid " *ngIf="Roottest">
+            <form (ngSubmit)="RootTestClick(FormulaRootTestList)" #Form="ngForm">
+
+                <div class="form-group fieldstyle">
+
+                    <div class="row">
+                        <div class="col-lg-6 col-md-6 col-sm-6 col-xs-12 newmarket-input"><label for="SpecificationMarket">Specification Market</label></div>
+                        <div class="col-lg-6 col-md-6 col-sm-6 col-xs-12 newmarket-inputbox">
+
+                            <!--<input type="text" value="sree" autocomplete="off" [(ngModel)]="Roottest.spec" name="fd">-->
+                            <input type="text" value="{{spec}}" name="tr" readonly>
+
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-lg-6 col-md-6 col-sm-6 col-xs-12 newmarket-input"><label for="modelYear">Model Year</label></div>
+                        <div class="col-lg-6 col-md-6 col-sm-6 col-xs-12 newmarket-inputbox">
+
+                            <!--<input type="text" value="sree" autocomplete="off" [(ngModel)]="year" name="fd">-->
+                            <input type="text" value="{{year}}" name="tr" readonly>
+
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-lg-6 col-md-6 col-sm-6 col-xs-12 newmarket-input"><label for="pno12">PNO12</label></div>
+                        <div class="col-lg-6 col-md-6 col-sm-6 col-xs-12 newmarket-inputbox">
+
+                            <input type="text" value="pno12" autocomplete="off" [(ngModel)]="Roottest.pno12" name="fd">
+
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-lg-6 col-md-6 col-sm-6 col-xs-12 newmarket-input"><label for="fuelType">Fuel Type</label></div>
+                        <div class="col-lg-6 col-md-6 col-sm-6 col-xs-12 newmarket-inputbox">
+
+                            <input type="text" value="fuelType" autocomplete="off" [(ngModel)]="Roottest.fuelType" name="fd">
+
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-lg-6 col-md-6 col-sm-6 col-xs-12 newmarket-input"><label for="co2">CO2</label></div>
+                        <div class="col-lg-6 col-md-6 col-sm-6 col-xs-12 newmarket-inputbox">
+
+                            <input type="text" value="co2" autocomplete="off" [(ngModel)]="Roottest.co2" name="fd">
+
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-lg-6 col-md-6 col-sm-6 col-xs-12 newmarket-input"><label for="fuelEfficiency">Fuel Efficiency</label></div>
+                        <div class="col-lg-6 col-md-6 col-sm-6 col-xs-12 newmarket-inputbox">
+
+                            <input type="text" value="fuelEfficiency" [(ngModel)]="Roottest.fuelEfficiency" autocomplete="off" name="fd">
+
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-lg-6 col-md-6 col-sm-6 col-xs-12 newmarket-input"><label for="fuelEfficiency">Electrical Energy Consumption</label></div>
+                        <div class="col-lg-6 col-md-6 col-sm-6 col-xs-12 newmarket-inputbox">
+
+                            <input type="text" value="electricalEnergyConsumption" [(ngModel)]="Roottest.electricalEnergyConsumption" autocomplete="off" name="fd">
+
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-lg-6 col-md-6 col-sm-6 col-xs-12 newmarket-input"><label for="electricalRange">Electrical Range</label></div>
+                        <div class="col-lg-6 col-md-6 col-sm-6 col-xs-12 newmarket-inputbox">
+
+                            <input type="text" value="electricalRange" [(ngModel)]="Roottest.electricalRange" autocomplete="off" name="fd">
+
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-lg-6 col-md-6 col-sm-6 col-xs-12 newmarket-input"><label for="actualMass">Actual Mass</label></div>
+                        <div class="col-lg-6 col-md-6 col-sm-6 col-xs-12 newmarket-inputbox">
+
+                            <input type="text" value="actualMass" [(ngModel)]="Roottest.actualMass" autocomplete="off" name="fd">
+
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-lg-6 col-md-6 col-sm-6 col-xs-12 newmarket-input"><label for="testMassInd">Test Mass Ind</label></div>
+                        <div class="col-lg-6 col-md-6 col-sm-6 col-xs-12 newmarket-inputbox">
+
+                            <input type="text" value="testMassInd" autocomplete="off" [(ngModel)]="Roottest.testMassInd" name="fd">
+
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-lg-6 col-md-6 col-sm-6 col-xs-12 newmarket-input"><label for="massInRunningOrderTotal">Mass In Running Order Total</label></div>
+                        <div class="col-lg-6 col-md-6 col-sm-6 col-xs-12 newmarket-inputbox">
+
+                            <input type="text" value="massInRunningOrderTotal" autocomplete="off" [(ngModel)]="Roottest.massInRunningOrderTotal" name="fd">
+
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-lg-6 col-md-6 col-sm-6 col-xs-12 newmarket-input"><label for="massOfOptionalEquipmentTotal">Mass Of Optional Equipment Total</label></div>
+                        <div class="col-lg-6 col-md-6 col-sm-6 col-xs-12 newmarket-inputbox">
+
+                            <input type="text" value="massOfOptionalEquipmentTotal" autocomplete="off" [(ngModel)]="Roottest.massOfOptionalEquipmentTotal" name="fd">
+
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-lg-6 col-md-6 col-sm-6 col-xs-12 newmarket-input"><label for="nedc_ActualMass">NEDC Actual Mass</label></div>
+                        <div class="col-lg-6 col-md-6 col-sm-6 col-xs-12 newmarket-inputbox">
+
+                            <input type="text" value="nedc_ActualMass" autocomplete="off" [(ngModel)]="Roottest.nedc_ActualMass" name="fd">
+
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-lg-6 col-md-6 col-sm-6 col-xs-12 newmarket-input"><label for="homologationCurbWeightTotal">Homologation Curb Weight Total</label></div>
+                        <div class="col-lg-6 col-md-6 col-sm-6 col-xs-12 newmarket-inputbox">
+
+                            <input type="text" value="homologationCurbWeightTotal" autocomplete="off" [(ngModel)]="Roottest.homologationCurbWeightTotal" name="fd">
+
+                        </div>
+                    </div>
+
+
+                </div>
+
+                <p-footer>
+                    <div class="ui-dialog-buttonpane ui-helper-clearfix">
+                        <div class="ui-helper-clearfix action-btn">
+                            <button type="button" pButton class="btn" label="TEST" (click)="RootTestClick(Roottest)"></button>
+                        </div>
+                        <br />
+
+                    </div>
+                </p-footer>
+
+            </form>
+        </div>
+    </p-dialog>
+
+    <div *ngIf="showRootTestResult==true">
+
+        <p-dialog header="TEST RESULT" [(visible)]="TestResultP" [responsive]="true" showEffect="fade" [modal]="true">
+
+            <div class="ui-grid ui-grid-responsive ui-fluid" *ngFor="let result of FormulaRootTestList">
+                <div class="form-group" *ngIf="FormulaRootTestList">
+
+                    <div class="row">
+                        <div class="col-lg-6 col-md-6 col-sm-6 col-xs-12 newmarket-input"><label for="calculatedEfficiencyClass">Calculated Efficiency Class</label></div>
+                        <div class="col-lg-6 col-md-6 col-sm-6 col-xs-12 newmarket-inputbox">
+
+                            <input type="text" value="{{result?.calculatedEfficiencyClass}}" name="tr" readonly>
+
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-lg-6 col-md-6 col-sm-6 col-xs-12 newmarket-input"><label for="value">Result Value</label></div>
+                        <div class="col-lg-6 col-md-6 col-sm-6 col-xs-12 newmarket-inputbox">
+
+                            <input type="text" value="{{result?.value}}" name="tr" readonly>
+
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        
+        </p-dialog>
+
+    </div>
+
+
+</div>
+
+
+
+    

@@ -1,0 +1,32 @@
+﻿<div class="row">
+    <div class="col-lg-6 col-md-6 col-sm-6 col-xs-12">
+        <div class="clearfix selectmarket newmarket-input">
+            <label>Available model Year :</label>
+            <div class="styled-select styled-new">
+                <select class="styled-select" [(ngModel)]="id" (change)="onSelectD($event)">
+                    <option [ngValue]="select" disabled [selected]="true">--Select Model Year--</option>
+                    <option *ngFor="let code of year " value={{code.id}}>{{code.value}}</option>
+                </select>
+            </div>
+        </div>
+    </div>
+    <div class="col-lg-6 col-md-6 col-sm-6 col-xs-12">
+        <div class="clearfix selectmarket newmarket-input">
+            <label style="margin-right:25px" class="to-style">To :</label>
+           <!-- <input class="styled-select" type="text" #titleInput placeholder="Provide Year" style="text-align: center" oncopy="return false" onpaste="return false">-->
+            <input type="text" style="text-align:center;" value="{{Selectedyear}}" name="tr" readonly>
+        </div>
+    </div>
+</div>
+<div class="action-btn" style="text-align:center">
+    <button type="submit" class="btn" [disabled]="activecopy" (click)='addTodo(id,Selectedyear)'>Copy</button> 
+    <button class="btn"(click)='cancelcopy()'>Cancel</button>
+</div>
+
+<p-dialog header="Confirm copy" [(visible)]="tobecopy" modal="modal" showEffect="fade">
+    <p>{{previewresponse}} </p>
+    <div  class="ui-dialog-buttonpane ui-helper-clearfix action-btn">
+        <button type="button"  class="btn" style="width: 104px" pButton icon="fa-check" (click)="okcopy(id)" label="Yes"></button>
+        <button type="button"  class="btn" style="width: 104px" pButton icon="fa-close" (click)="nocopy()" label="No"></button>
+    </div>
+</p-dialog>

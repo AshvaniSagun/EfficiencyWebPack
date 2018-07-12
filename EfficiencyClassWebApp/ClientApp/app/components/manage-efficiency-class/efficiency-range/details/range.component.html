@@ -1,0 +1,207 @@
+﻿<p-dataTable [value]="rangedetails" [rowStyleClass]="lookupRowStyleClass"  resizableColumns="true"  selectionMode="single" [(selection)]="selectedCar"  [responsive]="true" [rows]="10" [paginator]="true" [rowsPerPageOptions]="[10, 20,50]" #dt>
+
+    <p-column field="FuelTypeName" header="Fuel Type " [filter]="false" [sortable]="true"></p-column>
+
+    <p-column field="startRange" header="Start Range" [sortable]="true" [filter]="false"></p-column>
+
+    <p-column field="endRange" header="End Range " [filter]="false" filterPlaceholder="Search" [sortable]="false"></p-column>
+
+    <p-column field="ecValue" header="EC Value " [filter]="false" filterPlaceholder="Search" [sortable]="false"></p-column>
+   
+    <p-column field="CreatedBy" header="Created By" [sortable]="false" [filter]="false" filterPlaceholder="Search">
+
+    </p-column>
+
+    <p-column field="CreatedOn" header="Created On " [sortable]="false" [style]="{'width':'200px'}" [filter]="false" filterPlaceholder="Search">
+        <ng-template let-row="rowData" pTemplate="body">
+            {{row.CreatedOn | date}}
+        </ng-template>
+    </p-column>
+
+    <p-column field="UpdatedBy" header="Updated By " [sortable]="false" [filter]="false" filterPlaceholder="Search"></p-column>
+
+    <p-column field="UpdatedOn" header="Updated On" [sortable]="false" [style]="{'width':'200px'}" [filter]="false" filterPlaceholder="Search">
+        <ng-template let-row="rowData" pTemplate="body">
+            {{row.UpdatedOn | date}}
+        </ng-template>
+    </p-column>
+    <p-column  header="Edit" [style]="{'width':'80px'}">
+        <ng-template let-col let-carT="rowData" pTemplate type="body">
+
+            <button class="edit" type="button" *ngIf="carT.isPublished==true" [disabled]="showeditbutton" pButton icon="fa-edit" pTooltip="edit this row" tooltipPosition="top" (click)="showDialogToEdit(carT)"></button>
+            <button class="edit" type="button" *ngIf="carT.isPublished==false" pButton icon="fa-edit" pTooltip="edit this row" tooltipPosition="top" (click)="showDialogToEdit(carT)"></button>
+
+        </ng-template>
+    </p-column>
+
+    <p-footer>
+        <div class="ui-helper-clearfix action-btn" style="width:100%">
+            <button type="button" pButton icon="fa-plus" class="btn" style="float:left;width: 204px" (click)="showDialogToAdd()" label="Add Efficiency Range"></button>
+        </div>
+    </p-footer>
+</p-dataTable>
+<div *ngIf="showprimesave==true">
+    <p-dialog header="Add Efficiency Range Details" [(visible)]="displayDialog" [responsive]="true" showEffect="fade" [modal]="true">
+        <div class="ui-grid ui-grid-responsive ui-fluid" *ngIf="car">
+            <form (ngSubmit)="save()" #Form="ngForm">
+                <div class="form-group">
+                    <div class="row">
+                        <div class="col-lg-4 col-md-4 col-sm-4 col-xs-12 newmarket-input"><label for="FuelTypeId">Fuel Type</label></div>
+                        <div class="col-lg-8 col-md-8 col-sm-8 col-xs-12" style="margin-left:0px">
+                            <div class="styled-select">
+                                <select [(ngModel)]="car.FuelTypeId" required name="FuelTypeId" id="FuelTypeId" ngModel class="form-control">
+                                    <option [ngValue]="select" disabled [selected]="true">--Select Fuel Type--</option>
+                                    <option *ngFor="let type of fueltype" value="{{type.id}}">{{type.value}}</option>
+                                </select>
+                            </div>
+                            </div>
+                        </div>
+                    <div class="row">
+                        <div class="col-lg-4 col-md-4 col-sm-4 col-xs-12 newmarket-input"><label for="startRange">Start Range</label></div>
+                        <div class="col-lg-8 col-md-8 col-sm-8 col-xs-12 newmarket-inputbox">
+                            <input pattern="^[-]{0,1}[0-9]{0,8}(\.[0-9]{1,4})?$" pInputText id="startRange" placeholder="Provide Start Range" autocomplete="off" [(ngModel)]="car.startRange"
+                                   required [ngClass]="{'red-border-class': startRange.hasError}" class="form-control"
+                                   name="startRange"
+                                   #startRange="ngModel">
+                            <div [hidden]="startRange.valid || startRange.pristine"
+                                 class="">
+                                <div class="my-notify-error"
+                                     [hidden]="!startRange.hasError('required')">
+                                    Start Range is required
+                                </div>
+                                <div class="my-notify-error" *ngIf="startRange.errors && startRange.errors.pattern">
+                                    Start Range is invalid
+                                </div>
+                            </div>                            
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-lg-4 col-md-4 col-sm-4 col-xs-12 newmarket-input"><label for="endRange">End Range</label></div>
+                        <div class="col-lg-8 col-md-8 col-sm-8 col-xs-12 newmarket-inputbox">
+                            <input  pattern="^[-]{0,1}[0-9]{0,8}(\.[0-9]{1,4})?$" pInputText id="endRange" placeholder="Provide End Range" autocomplete="off" [(ngModel)]="car.endRange"
+                             required [ngClass]="{'red-border-class': endRange.hasError}" class="form-control"
+                                   name="endRange"
+                                   #endRange="ngModel">
+                            <div [hidden]="endRange.valid || endRange.pristine"
+                                 class="">
+                                <div class="my-notify-error"
+                                     [hidden]="!endRange.hasError('required')">
+                                    End Range is required
+                                </div>
+                                <div class="my-notify-error" *ngIf="endRange.errors && endRange.errors.pattern">
+                                    End Range is invalid
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-lg-4 col-md-4 col-sm-4 col-xs-12 newmarket-input"><label for="ecValue">EC Value</label></div>
+                        <div class="col-lg-8 col-md-8 col-sm-8 col-xs-12 newmarket-inputbox">
+                            <input (keypress)="_keyPressSymbols($event)" maxlength="5" pInputText id="ecValue" placeholder="Provide EC Value" autocomplete="off" [(ngModel)]="car.ecValue"
+                      required [ngClass]="{'red-border-class': ecValue.hasError}" class="form-control"
+                                   name="ecValue"
+                                   #ecValue="ngModel">
+                            <div [hidden]="ecValue.valid || ecValue.pristine"
+                                 class="">
+                                <div class="my-notify-error"
+                                     [hidden]="!ecValue.hasError('required')">
+                                    EC Value is required
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <p-footer>
+                    <div class="ui-dialog-buttonpane ui-helper-clearfix">
+                        <div class="ui-helper-clearfix action-btn">
+                            <button type="button" pButton icon="fa-check" class="btn" (click)="save(car)" label="Save" [disabled]="!Form.form.valid"></button>
+                        </div>
+                    </div>
+                </p-footer>
+            </form>
+        </div>
+    </p-dialog>
+</div>
+<div *ngIf="showprimeupdate==true">
+    <p-dialog header="Update or Delete Efficiency Range Details" [(visible)]="displayDialog" [responsive]="true" showEffect="fade" [modal]="true">
+        <div class="ui-grid ui-grid-responsive ui-fluid" *ngIf="car">
+            <form (ngSubmit)="save()" #Form="ngForm">
+                <div class="form-group">
+                    <div class="row">
+                        <div class="col-lg-4 col-md-4 col-sm-4 col-xs-12 newmarket-input"><label for="FuelTypeId">Fuel Type</label></div>
+                        <div class="col-lg-8 col-md-8 col-sm-8 col-xs-12">
+                            <div class="styled-select">
+                                <select [(ngModel)]="car.FuelTypeId" required name="FuelTypeId" id="FuelTypeId" ngModel class="form-control">
+                                    <option value="" disabled selected>--Select Fuel Type--</option>
+                                    <option *ngFor="let type of fueltype" value="{{type.id}}">{{type.value}}</option>
+                                </select>
+                            </div>
+                        </div>
+                        </div>
+                    <div class="row">
+                        <div class="col-lg-4 col-md-4 col-sm-4 col-xs-12 newmarket-input"><label for="startRange">Start Range</label></div>
+                        <div class="col-lg-8 col-md-8 col-sm-8 col-xs-12 newmarket-inputbox">
+                            <input pattern="^[-]{0,1}[0-9]{0,8}(\.[0-9]{1,4})?$" pInputText id="startRange" placeholder="Provide Start Range" autocomplete="off" [(ngModel)]="car.startRange"
+                           required [ngClass]="{'red-border-class': startRange.hasError}" class="form-control"
+                                   name="startRange"
+                                   #startRange="ngModel">
+                            <div [hidden]="startRange.valid || startRange.pristine"
+                                 class="">
+                                <div class="my-notify-error"
+                                     [hidden]="!startRange.hasError('required')">
+                                    Start Range is required
+                                </div>
+                                <div class="my-notify-error" *ngIf="startRange.errors && startRange.errors.pattern">
+                                    Start Range is invalid
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-lg-4 col-md-4 col-sm-4 col-xs-12 newmarket-input"><label for="endRange">End Range</label></div>
+                        <div class="col-lg-8 col-md-8 col-sm-8 col-xs-12 newmarket-inputbox">
+                            <input  pattern="^[-]{0,1}[0-9]{0,8}(\.[0-9]{1,4})?$" pInputText id="endRange" placeholder="Provide End Range" autocomplete="off" [(ngModel)]="car.endRange"
+                         required [ngClass]="{'red-border-class': endRange.hasError}" class="form-control"
+                                   name="endRange"
+                                   #endRange="ngModel">
+                            <div [hidden]="endRange.valid || endRange.pristine"
+                                 class="">
+                                <div class="my-notify-error"
+                                     [hidden]="!endRange.hasError('required')">
+                                    End Range is required
+                                </div>
+                                <div class="my-notify-error" *ngIf="endRange.errors && endRange.errors.pattern">
+                                    End Range is invalid
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-lg-4 col-md-4 col-sm-4 col-xs-12 newmarket-input"><label for="ecValue">EC Value</label></div>
+                        <div class="col-lg-8 col-md-8 col-sm-8 col-xs-12 newmarket-inputbox">
+                            <input (keypress)="_keyPressSymbols($event)" maxlength="5" pInputText id="ecValue" placeholder="Provide EC Value" autocomplete="off" [(ngModel)]="car.ecValue"
+                             required [ngClass]="{'red-border-class': ecValue.hasError}" class="form-control"
+                                   name="ecValue"
+                                   #ecValue="ngModel">
+                            <div [hidden]="ecValue.valid || ecValue.pristine"
+                                 class="">
+                                <div class="my-notify-error"
+                                     [hidden]="!ecValue.hasError('required')">
+                                    EC Value is required
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <p-footer>
+                    <div class="ui-dialog-buttonpane ui-helper-clearfix">
+                        <div class="ui-helper-clearfix action-btn">
+                            <button type="button" pButton icon="fa-check" class="btn" (click)="update(car)" label="Update" [disabled]="!Form.form.valid"></button>
+                            <button type="button" pButton icon="fa-close" class="btn" (click)="delete(car)" label="Delete" [disabled]="!Form.form.valid"></button>
+                        </div>
+                    </div>
+                </p-footer>
+            </form>
+        </div>
+    </p-dialog>
+</div>

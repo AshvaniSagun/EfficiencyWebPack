@@ -1,0 +1,141 @@
+﻿<!--<div class="col-xs-11 col-sm-11 col-md-11 col-lg-11 no-padding table-responsive">
+    <div class="pane pane--table1">
+        <div class="pane-hScroll">
+            <table class="table table-striped table-bordered">
+                <thead class="table-inverse">
+                    <tr>
+                        <th class="medium-columnwidth">Specific Market Name</th>
+                        <th class="medium-columnwidth">Model Year</th>
+                        <th class="small-columnwidth">Actions</th>
+                    </tr>
+                </thead>
+            </table>
+            <div class="pane-vScroll fixed-table-body tablescroll">
+                <table>
+                    <tbody>
+                        <tr>
+                            <td class="medium-columnwidth">
+                                <div class="styled-select">
+                                    <select>
+                                        <option selected="selected"></option>
+                                        <option></option>
+                                    </select>
+                                </div>
+                            </td>
+                            <td class="medium-columnwidth"><input type="text" class="defn"></td>
+                            <td class="small-columnwidth">
+                                <a href="#"><i class="fa fa-save" aria-hidden="true"></i></a>
+                                <a href="#"><i class="fa fa-close" aria-hidden="true"></i></a>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="medium-columnwidth">
+                                <div class="styled-select">
+                                    <select>
+                                        <option selected="selected"></option>
+                                        <option></option>
+                                    </select>
+                                </div>
+                            </td>
+                            <td class="medium-columnwidth"><input type="text" class="defn"></td>
+                            <td class="small-columnwidth">
+                                <a href="#"><i class="fa fa-save" aria-hidden="true"></i></a>
+                                <a href="#"><i class="fa fa-close" aria-hidden="true"></i></a>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>-->
+<p-dataTable [value]="admindetails" resizableColumns="true" selectionMode="single" [(selection)]="selectedCar" sortField="CreatedOn" sortOrder="-1" [responsive]="true" [rows]="10" [rowsPerPageOptions]="[10, 20,50]"  [paginator]="true" #dt>
+
+    <p-column field="SpecMarketCode" header="Spec Market Code" [filter]="false" filterPlaceholder="Search Market" [sortable]="false"></p-column>
+
+    <p-column field="marketName" header="Market Name" [filter]="false" filterPlaceholder="Search Type" [sortable]="false"></p-column>
+
+    <p-column field="CreatedBy" header="Created By" [filter]="false" [sortable]="false"></p-column>
+    <p-column field="CreatedOn" header="Created On" [filter]="false" [sortable]="false"></p-column>
+    <p-column field="UpdatedBy" header="Updated By" [filter]="false" [sortable]="false"></p-column>
+    <p-column field="UpdatedOn" header="Updated On" [filter]="false" [sortable]="false"></p-column>
+
+    <p-column header="Edit" [style]="{'width':'80px'}">
+        <ng-template let-col let-carT="rowData" pTemplate type="body">
+            <button class="edit" type="button" pButton icon="fa-edit" pTooltip="edit this row" tooltipPosition="top" (click)="showDialogToEdit(carT)"></button>
+        </ng-template>
+    </p-column>
+
+    <p-footer>
+        <div class="ui-helper-clearfix action-btn"  style="width:100%">
+            <button type="button" pButton icon="fa-plus" style="float:left" class="btn" (click)="showDialogToAdd()" label="Add New Market"></button>
+        </div>
+    </p-footer>
+</p-dataTable>
+<div class="mobileView" *ngIf="showprimesave==true">
+    <p-dialog header="Add Market" [(visible)]="displayDialog" [responsive]="true" showEffect="fade" [modal]="true">
+        <div class="ui-grid ui-grid-responsive ui-fluid" *ngIf="car">
+            <form (ngSubmit)="save()" #Form="ngForm">
+                <div class="form-group">
+                    <div class="row">
+                        <div class="col-lg-5 col-md-5 col-sm-5 col-xs-12 newmarket-input"><label for="SpecMarketCode">Spec Market Code</label></div>
+                        <div class="col-lg-7 col-md-7 col-sm-7 col-xs-12 newmarket-inputbox">
+                            <input (keypress)="_keyPress($event)" (keydown.space)="$event.preventDefault()" pInputText id="SpecMarketCode" placeholder="Provide Spec Market Code" autocomplete="off" [(ngModel)]="car.SpecMarketCode"
+                                   maxlength="3" required class="form-control"
+                                   name="SpecMarketCode">
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-lg-5 col-md-5 col-sm-5 col-xs-12 newmarket-input"><label for="marketName">Market Name</label></div>
+                        <div class="col-lg-7 col-md-7 col-sm-7 col-xs-12 newmarket-inputbox">
+                            <input (keypress)="_keyPressSymbols($event)" pInputText id="marketName" placeholder="Provide Market Name" autocomplete="off" [(ngModel)]="car.marketName"
+                                 maxlength="20"  required class="form-control"
+                                   name="marketName">
+                        </div>
+                    </div>
+                </div>            
+                <p-footer>
+                    <div class="ui-dialog-buttonpane ui-helper-clearfix">
+                        <div class="ui-helper-clearfix action-btn">
+                            <button type="button" pButton icon="fa-check" class="btn" (click)="save(car)" label="Save" [disabled]="!Form.form.valid"></button>
+                        </div>
+                    </div>
+                </p-footer>
+            </form>
+        </div>
+    </p-dialog>
+</div>
+<div *ngIf="showprimeupdate==true">
+    <p-dialog header="Update or Delete Market" [(visible)]="displayDialog" [responsive]="true" showEffect="fade" [modal]="true">
+        <form (ngSubmit)="update()" #Form="ngForm">
+            <div class="form-group">
+                <div class="form-group">
+                    <div class="row">
+                        <div class="col-lg-5 col-md-5 col-sm-5 col-xs-12 newmarket-input"><label for="SpecMarketCode">Spec Market Code</label></div>
+                        <div class="col-lg-7 col-md-7 col-sm-7 col-xs-12">
+                            <input (keypress)="_keyPress($event)" maxlength="3" (keydown.space)="$event.preventDefault()" pInputText id="SpecMarketCode" placeholder="Provide Spec Market Code" autocomplete="off" [(ngModel)]="car.SpecMarketCode"
+                                required class="form-control"
+                                   name="SpecMarketCode">
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-lg-5 col-md-5 col-sm-5 col-xs-12 newmarket-input"><label for="marketName">Market Name</label></div>
+                        <div class="col-lg-7 col-md-7 col-sm-7 col-xs-12">
+                            <input (keypress)="_keyPressSymbols($event)"  pInputText id="marketName" placeholder="Provide Market Name" autocomplete="off" [(ngModel)]="car.marketName"
+                               required class="form-control"
+                                   name="marketName">
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <p-footer>
+                <div class="ui-dialog-buttonpane ui-helper-clearfix">
+                    <div class="ui-helper-clearfix action-btn">
+                        <button type="button" pButton icon="fa-check" class="btn" (click)="update(car)" label="Update" [disabled]="!Form.form.valid"></button>
+                        <button type="button" class="btn" pButton icon="fa-close" (click)="delete(car)" label="Delete" [disabled]="!Form.form.valid"></button>
+                    </div>
+                </div>
+            </p-footer>
+        </form>
+    </p-dialog>
+</div>

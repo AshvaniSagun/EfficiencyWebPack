@@ -1,0 +1,69 @@
+﻿<div class="col-lg-4 col-md-5 col-sm-5 col-xs-12 no-padding">
+    <div class="clearfix newmarket-input selectmarket">
+        <label>Select Market :</label>
+        <div class="styled-select styled-new">
+            <!--<select class="styled-select" [(ngModel)]="marketId" (change)="onSelectD($event.target.value)">
+                <option [ngValue]="select" disabled [selected]="true">--Select Market--</option>
+                <option *ngFor="let code of name" value="{{code.marketId}}">{{code.marketName}}</option>
+            </select>-->
+
+            <select class="styled-select" [(ngModel)]="selectedspec" (change)="onSelectD($event)">
+                <option [ngValue]="select" disabled [selected]="true">--Select Market--</option>
+                <option *ngFor="let code of name" [ngValue]="code">{{code.marketName}}</option>
+            </select>
+
+
+
+        </div>
+    </div>
+</div>
+<div class="col-lg-5 col-md-5 col-sm-5 col-xs-12 no-padding">
+    <div class="clearfix newmarket-input selectmarket">
+        <label>Select Model Year :</label>
+        <div class="styled-select styled-new">
+            <select class="styled-select" [(ngModel)]="id" (change)="onSelectYear($event)">
+                <option [ngValue]="select" select style="color:dimgray">--Select Model Year--</option>
+                <option *ngFor="let code of year " value={{code.id}}>{{code.value}}</option>
+            </select>
+        </div>
+    </div>
+</div>
+<div class="ui-dialog-buttonpane">
+    <div class="ui-helper-clearfix publishBtn action-btn">
+        <button type="button" pButton [disabled]="showpublishbutton" class="btn" label="PUBLISH" (click)="publishbutton()"></button>
+    </div>
+</div>
+<div [hidden]="hide" class="manageEffClass mobile-padding">
+    <div class="container-rightcontent">
+        <div class="efficiencyTabs">
+            <ul class="nav nav-tabs secondlevel-tab">
+                <li><a data-toggle="tab" class="active copy" (click)="navigatecopy()">Copy Efficiency Data</a></li>
+                <li *ngIf="Generic"><a class="details" (click)="navigateWeightSegment()" data-toggle="tab">PNO12 Details</a></li>
+                <li><a (click)="navigateRange()" class="range" data-toggle="tab">Efficiency Range</a>
+                </li>
+                <li *ngIf="Generic"><a (click)="navigateFormula()" class="formula" data-toggle="tab">Add Formula</a></li>
+            </ul>
+            <div class="tab-content">
+                <div class="efficiencyTabs">
+                    <ul class="nav nav-tabs secondlevel-tab">
+                        <!--<li *ngIf="range"><a (click)="navigateDetails()" data-toggle="tab"></a></li>-->
+                        <li *ngIf="formula"><a (click)="navigatevariable()" class="highlight variable" data-toggle="tab">Variable</a></li>
+                        <li *ngIf="formula"><a data-toggle="tab" class="formulanew" (click)="navigateformulanew()">Formula</a></li>
+                    </ul>
+                </div>
+                <div class="routercontent">
+                    <router-outlet></router-outlet>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<p-dialog header="Confirm publish" [(visible)]="tobepublishedpopup" modal="modal" showEffect="fade">
+    <p>{{previewresponse}} </p>
+    <div  class="ui-dialog-buttonpane ui-helper-clearfix action-btn">
+        <button type="button"  class="btn" style="width: 104px" pButton icon="fa-check" (click)="Okpublish()" label="Yes"></button>
+        <button type="button"  class="btn" style="width: 104px" pButton icon="fa-close" (click)="Nopublish()" label="No"></button>
+    </div>
+</p-dialog>

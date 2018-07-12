@@ -1,0 +1,7 @@
+
+<ul class="nav nav-tabs mainTabs-style">
+    <li  *ngIf="roleId=='2'|| roleId=='1'" class="active" [routerLinkActive]="['link-active']"> <a [routerLink]="['/home']"> Home</a></li>
+    <li  *ngIf="roleId=='2'|| roleId=='1'" class="active" [routerLinkActive]="['link-active']"> <a [routerLink]="['/markets']"> MANAGE MARKET</a> </li>
+    <li *ngIf="roleId=='2'" class="active" [routerLinkActive]="['link-active']"> <a [routerLink]="['/ManageEfficiencyClass']"> MANAGE Efficiency Class</a> </li>
+    <li *ngIf="roleId=='1'" class="active" [routerLinkActive]="['link-active']"> <a [routerLink]="['/users']"> MANAGE USERS</a> </li>
+</ul>

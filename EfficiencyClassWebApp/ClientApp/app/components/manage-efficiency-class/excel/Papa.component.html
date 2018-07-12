@@ -1,0 +1,234 @@
+﻿<div class="papacode">
+    <p-dataTable [value]="weightsegment" [rowStyleClass]="lookupRowStyleClass" sortField="CreatedOn" sortOrder="-1" resizableColumns="true" selectionMode="single" [(selection)]="selectedCar" [responsive]="true" [rows]="10" [rowsPerPageOptions]="[10, 20,50]" [paginator]="true" #dt>
+        <p-column field="MMID" header="MMID" hidden="hidden"></p-column>
+        <p-column field="PNO12" header="PNO12 " [filter]="true" filterPlaceholder="Search" [sortable]="true"></p-column>
+        <p-column field="PWeight" header="Weight" [filter]="true" filterPlaceholder="Search" [sortable]="true"></p-column>
+        <p-column field="SegmentCo2" header="SegmentCo2 " [filter]="true" filterPlaceholder="Search" [sortable]="true"></p-column>
+        <p-column field="CreatedBy" header="CreatedBy" [sortable]="false" [filter]="false" filterPlaceholder="Search"></p-column>
+        <p-column field="CreatedOn" header="CreatedOn " [sortable]="false" [style]="{'width':'200px'}" [filter]="false" filterPlaceholder="Search">
+            <ng-template let-row="rowData" pTemplate="body">
+                {{row.CreatedOn | date}}
+            </ng-template>
+        </p-column>
+        <p-column field="UpdatedBy" header="UpdatedBy " [sortable]="false" [filter]="false" filterPlaceholder="Search"></p-column>
+        <p-column field="UpdatedOn" header="UpdatedOn" [sortable]="false" [style]="{'width':'200px'}" [filter]="false" filterPlaceholder="Search">
+            <ng-template let-row="rowData" pTemplate="body">
+                {{row.UpdatedOn | date}}
+            </ng-template>
+        </p-column>
+        <p-column header="Edit" [style]="{'width':'80px'}">
+            <ng-template let-col let-carT="rowData" pTemplate type="body">
+                <button *ngIf="carT.isPublished==true" class="edit" type="button" pButton icon="fa-edit" [disabled]="showeditbutton" pTooltip="edit this row" tooltipPosition="top" (click)="showDialogToEdit(carT)"></button>
+                <button *ngIf="carT.isPublished==false" class="edit" type="button" pButton icon="fa-edit" pTooltip="edit this row" tooltipPosition="top" (click)="showDialogToEdit(carT)"></button>
+
+            </ng-template>
+        </p-column>
+        <p-footer>
+            <div class="action-btn" style="width:100%">
+                <button type="button" pButton icon="fa-plus" class="btn" style="float:left" (click)="showDialogToAdd()" label="Add PNO12"></button>
+                <div class="fileupload">
+                    Bulk Upload
+                    <input #myInput type='file' accept=".csv" pTooltip="Select .csv file only" tooltipPosition="top" class="hide_file" style="float:left;width:120px !important" (change)="getFilePreview($event)">
+                </div>
+            </div>
+        </p-footer>
+    </p-dataTable>
+    <div *ngIf="showprimesave==true">
+        <p-dialog header="Add PNO12 Details" [(visible)]="displayDialog" [responsive]="true" showEffect="fade" [modal]="true">
+            <div class="ui-grid ui-grid-responsive ui-fluid" *ngIf="car">
+                <form (ngSubmit)="save()" #Form="ngForm">
+                    <div class="form-group">
+                        <div class="row">
+                            <div class="col-lg-4 col-md-4 col-sm-4 col-xs-12 newmarket-input"><label for="PNO12">PNO12</label></div>
+                            <div class="col-lg-8 col-md-8 col-sm-8 col-xs-12 newmarket-inputbox">
+                                <input pInputText id="PNO12"
+                                       class="form-control" required autocomplete="off"
+                                       name="PNO12" maxlength="12"
+                                       #PNO12="ngModel" [(ngModel)]="car.PNO12">
+                                <div [hidden]="PNO12.valid || PNO12.pristine"
+                                     class="">
+                                    <div class="my-notify-error" [hidden]="!PNO12.hasError('required')">PNO12 is required</div>
+                                </div>
+
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-lg-4 col-md-4 col-sm-4 col-xs-12 newmarket-input"><label for="PWeight">Weight</label></div>
+                            <div class="col-lg-8 col-md-8 col-sm-8 col-xs-12 newmarket-inputbox">
+                                <input (keypress)="_keyPress($event)" pInputText id="PWeight"
+                                       class="form-control" [(ngModel)]="car.PWeight"  autocomplete="off"
+                                       name="PWeight" maxlength="6"
+                                       #PWeight="ngModel">
+                                <div [hidden]="PWeight.valid || PWeight.pristine"
+                                     class="">
+                                    <div class="my-notify-error" [hidden]="!PWeight.hasError('required')">PWeight  is required</div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-lg-4 col-md-4 col-sm-4 col-xs-12 newmarket-input"><label for="SegmentCo2">SegmentCo2</label></div>
+                            <div class="col-lg-8 col-md-8 col-sm-8 col-xs-12 newmarket-inputbox">
+                                <input (keypress)="_keyPress($event)" pInputText id="SegmentCo2" class="form-control" [(ngModel)]="car.SegmentCo2" autocomplete="off"
+                                       name="SegmentCo2" maxlength="6"
+                                       #SegmentCo2="ngModel">
+                                <div [hidden]="SegmentCo2.valid || SegmentCo2.pristine"
+                                     class="">
+                                    <div class="my-notify-error" [hidden]="!SegmentCo2.hasError('required')">SegmentCo2  is required</div>
+                                </div>
+
+                            </div>
+
+                        </div>
+                    </div>
+                    <p-footer>
+                        <div class="ui-dialog-buttonpane ui-helper-clearfix">
+                            <div class="ui-helper-clearfix action-btn">
+                                <button type="button" pButton icon="fa-check" class="btn" (click)="save(car)" [disabled]="!Form.form.valid" label="Save"></button>
+                            </div>
+                        </div>
+                    </p-footer>
+                </form>
+            </div>
+        </p-dialog>
+    </div>
+    <div class="pnoMob" *ngIf="showprimeupdate==true">
+        <p-dialog header="Update or Delete PNO12 Details" [(visible)]="displayDialog" [responsive]="true" showEffect="fade" [modal]="true">
+            <div class="ui-grid ui-grid-responsive ui-fluid" *ngIf="car">
+                <form (ngSubmit)="save()" #Form="ngForm">
+                    <div class="form-group">
+                        <div class="row">
+                            <div class="col-lg-4 col-md-4 col-sm-4 col-xs-12 newmarket-input"><label for="PNO12">PNO12</label></div>
+                            <div class="col-lg-8 col-md-8 col-sm-8 col-xs-12 newmarket-inputbox">
+                                <input pInputText id="PNO12"
+                                       class="form-control" required autocomplete="off"
+                                       name="PNO12" maxlength="12"
+                                       #PNO12="ngModel" [(ngModel)]="car.PNO12">
+                                <div [hidden]="PNO12.valid || PNO12.pristine"
+                                     class="">
+                                    <div class="my-notify-error" [hidden]="!PNO12.hasError('required')">PNO12 is required</div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-lg-4 col-md-4 col-sm-4 col-xs-12 newmarket-input"><label for="PWeight">Weight</label></div>
+                            <div class="col-lg-8 col-md-8 col-sm-8 col-xs-12 newmarket-inputbox">
+                                <input (keypress)="_keyPress($event)" pInputText id="PWeight"
+                                       class="form-control" [(ngModel)]="car.PWeight" autocomplete="off" maxlength="6"
+                                       name="PWeight"
+                                       #PWeight="ngModel">
+                                <div [hidden]="PWeight.valid || PWeight.pristine"
+                                     class="">
+                                    <div class="my-notify-error" [hidden]="!PWeight.hasError('required')">Weight  is required</div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-lg-4 col-md-4 col-sm-4 col-xs-12 newmarket-input"><label for="SegmentCo2">SegmentCo2</label></div>
+                            <div class="col-lg-8 col-md-8 col-sm-8 col-xs-12 newmarket-inputbox">
+                                <input (keypress)="_keyPress($event)" pInputText id="SegmentCo2" class="form-control" [(ngModel)]="car.SegmentCo2" autocomplete="off"
+                                       name="SegmentCo2" maxlength="6"
+                                       #SegmentCo2="ngModel">
+                                <div [hidden]="SegmentCo2.valid || SegmentCo2.pristine"
+                                     class="">
+                                    <div class="my-notify-error" [hidden]="!SegmentCo2.hasError('required')">SegmentCo2  is required</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <p-footer>
+                        <div class="ui-dialog-buttonpane ui-helper-clearfix">
+                            <div class="ui-helper-clearfix action-btn">
+                                <button type="button" pButton icon="fa-check" class="btn" (click)="updatecsvdb(car)" [disabled]="!Form.form.valid" label="Update"></button>
+                                <button type="button" pButton icon="fa-close" class="btn" (click)="deletecsvdbdata(car)" [disabled]="!Form.form.valid" label="Delete"></button>
+                            </div>
+                        </div>
+                    </p-footer>
+                </form>
+            </div>
+        </p-dialog>
+    </div>
+
+    <!--Preview-->
+
+    <p-dialog header="Selected PNO12 Details" [(visible)]="display" modal="modal" width="1000" [responsive]="true">
+        <p-dataTable [value]="preview" resizableColumns="true" selectionMode="single" [(selection)]="selectedCars" sortField="CreatedOn" sortOrder="-1" [responsive]="true" [rows]="10" [paginator]="true" #dt>
+
+            <p-column field="PNO12" header="PNO12 " [filter]="true" filterPlaceholder="Search" [sortable]="true"></p-column>
+
+            <p-column field="PWeight" header="Weight " [filter]="true" filterPlaceholder="Search" [sortable]="true"></p-column>
+
+            <p-column field="SegmentCo2" header="SegmentCo2" [filter]="true" filterPlaceholder="Search" [sortable]="true"></p-column>
+            <p-column header="Edit">
+                <ng-template let-col let-carT="rowData" let-i="rowIndex" pTemplate type="body">
+                    <button type="button" pButton icon="fa-edit" pTooltip="edit this row" tooltipPosition="top" (click)="InMemoryEdit(carT,i)"></button>
+                </ng-template>
+            </p-column>
+            <footer></footer>
+        </p-dataTable>
+        <div class="ui-dialog-buttonpane ui-helper-clearfix">
+            <div class="ui-helper-clearfix action-btn">
+                <button type="button" pButton icon="fa-plus" class="btn" style="float:left" (click)="showDialogToAdds()" label="Add PNO12"></button>
+                <button type="button" pButton icon="fa-plus" class="btn" style="float:left" (click)="fileclick(car)" label="Upload CSV"></button>
+            </div>
+        </div>
+    </p-dialog>
+    <p-dialog header="" [(visible)]="displayPreviewDialogpop" [responsive]="true" showEffect="fade" [modal]="true" class="dialog-align">
+        <h2 *ngIf="newCars" class="dialog-heading">Add PNO12 Details</h2>
+        <h2 *ngIf="!newCars" class="dialog-heading">Update or Delete PNO12 Details</h2>
+        <div class="ui-grid ui-grid-responsive ui-fluid" *ngIf="cars">
+            <form (ngSubmit)="savep()" #Form="ngForm">
+                <div class="form-group">
+                    <div class="row">
+                        <div class="col-lg-4 col-md-4 col-sm-4 col-xs-12 newmarket-input"><label for="PNO12">PNO12</label></div>
+                        <div class="col-lg-8 col-md-8 col-sm-8 col-xs-12 newmarket-inputbox">
+                            <input pInputText id="PNO12" (keydown.space)="$event.preventDefault()" maxlength="12" [(ngModel)]="cars.PNO12" class="form-control" required autocomplete="off"
+                                   name="PNO12"
+                                   #PNO12="ngModel">
+                            <div [hidden]="PNO12.valid || PNO12.pristine"
+                                 class="">
+                                <div class="my-notify-error" [hidden]="!PNO12.hasError('required')">PNO12 is required</div>
+                            </div>
+
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-lg-4 col-md-4 col-sm-4 col-xs-12 newmarket-input"><label for="PWeight">PWeight</label></div>
+                        <div class="col-lg-8 col-md-8 col-sm-8 col-xs-12 newmarket-inputbox">
+                            <input (keypress)="_keyPress($event)" maxlength="6" pInputText id="PWeight" [(ngModel)]="cars.PWeight" class="form-control"  autocomplete="off"
+                                   name="PWeight"
+                                   #PWeight="ngModel">
+                            <div [hidden]="PWeight.valid || PWeight.pristine"
+                                 class="">
+                                <div class="my-notify-error" [hidden]="!PWeight.hasError('required')">PWeight  is required</div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-lg-4 col-md-4 col-sm-4 col-xs-12 newmarket-input"><label for="SegmentCo2">SegmentCo2</label></div>
+                        <div class="col-lg-8 col-md-8 col-sm-8 col-xs-12 newmarket-inputbox">
+                            <input (keypress)="_keyPress($event)" maxlength="6" pInputText id="SegmentCo2" [(ngModel)]="cars.SegmentCo2" class="form-control" autocomplete="off"
+                                   name="SegmentCo2"
+                                   #SegmentCo2="ngModel">
+                            <div [hidden]="SegmentCo2.valid || SegmentCo2.pristine"
+                                 class="">
+                                <div class="my-notify-error" [hidden]="!SegmentCo2.hasError('required')">SegmentCo2  is required</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <p-footer>
+                    <div class="ui-dialog-buttonpane ui-helper-clearfix">
+                        <div class="ui-helper-clearfix action-btn">
+                            <button type="button" pButton icon="fa-check" class="btn" (click)="updatep(cars)" *ngIf="!newCars" [disabled]="!Form.form.valid" label="Update"></button>
+                            <button type="button" pButton icon="fa-check" class="btn" (click)="savep(cars)" *ngIf="newCars" [disabled]="!Form.form.valid" label="Save"></button>
+                            <button type="button" pButton icon="fa-close" class="btn" (click)="deletep(cars)" *ngIf="!newCars" [disabled]="!Form.form.valid" label="Delete"></button>
+                        </div>
+                    </div>
+                </p-footer>
+            </form>
+        </div>
+    </p-dialog>
+    <p-growl [value]="msgs"></p-growl>
+
+    <p-confirmDialog></p-confirmDialog>
+</div>

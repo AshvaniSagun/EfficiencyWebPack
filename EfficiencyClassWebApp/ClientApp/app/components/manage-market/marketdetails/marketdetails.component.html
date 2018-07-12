@@ -1,0 +1,182 @@
+﻿<p-dataTable [value]="marketsdetails" resizableColumns="true" selectionMode="single" [(selection)]="selectedCar" [responsive]="true"  [rows]="10" [paginator]="true" [rowsPerPageOptions]="[10, 20,50]"  sortField="CreatedOn" sortOrder="-1" #dt>
+
+    <p-column field="MarketName" header="Market Name " [filter]="true" filterPlaceholder="Search Market" [sortable]="false"></p-column>
+
+    <p-column field="MarketTypeName" header="Market Type" [filter]="false" filterPlaceholder="Search Type" [sortable]="false"></p-column>
+
+    <!--<p-column field="ParameterGroupName" header="EC Dependent Factor " [filter]="false" [sortable]="false"></p-column>-->
+
+    <p-column field="Year" header=" Model Year " [style]="{'width':'100px'}" [filter]="false" filterPlaceholder="Search" [sortable]="false"></p-column>
+
+    <p-column field="CreatedBy" header="Created By" [sortable]="false" [filter]="false" filterPlaceholder="Search"></p-column>
+
+    <p-column field="CreatedOn" header="Created On " [sortable]="false" [style]="{'width':'200px'}" [filter]="false" filterPlaceholder="Search">
+        <ng-template let-row="rowData" pTemplate="body">
+            {{row.CreatedOn | date}}
+        </ng-template>
+    </p-column>
+
+    <p-column field="UpdatedBy" header="Updated By " [sortable]="false" [filter]="false" filterPlaceholder="Search"></p-column>
+
+    <p-column field="UpdatedOn" header="Updated On" [sortable]="false" [style]="{'width':'200px'}" [filter]="false" filterPlaceholder="Search">
+        <ng-template let-row="rowData" pTemplate="body">
+            {{row.UpdatedOn | date}}
+        </ng-template>
+    </p-column>
+    <p-column header="Delete" [style]="{'width':'80px'}">
+        <ng-template let-col let-carT="rowData" pTemplate type="body">
+            <button class="edit" type="button" pButton icon="fa fa-trash" pTooltip="delete this row" tooltipPosition="top" (click)="showDialogToEdit(carT)"></button>
+        </ng-template>
+    </p-column>
+    <p-footer>
+        <div class="ui-helper-clearfix action-btn" style="width:100%">
+            <button type="button" pButton icon="fa-plus" class="btn" style="float:left" (click)="showDialogToAdd()" label="Add Market Details"></button>
+        </div>
+    </p-footer>
+</p-dataTable>
+<div *ngIf="showprimesave==true">
+    <p-dialog header="Add Market Details" [(visible)]="displayDialog" [responsive]="true" showEffect="fade" [modal]="true">
+        <div class="ui-grid ui-grid-responsive ui-fluid" *ngIf="car">
+            <form (ngSubmit)="save()" #Form="ngForm">
+                <div class="form-group">
+                    <div class="row">
+                        <div class="col-lg-4 col-md-4 col-sm-4 col-xs-12 newmarket-input"><label for="MarketName">Market Name</label></div>
+                        <div class="col-lg-8 col-md-8 col-sm-8 col-xs-12">
+                            <div class="styled-select">
+                                <select [(ngModel)]="car.Marketid" required name="Marketid" id="Marketid" ngModel class="form-control">
+                                    <option [ngValue]="select" disabled [selected]="true">--Select Market--</option>
+                                    <option *ngFor="let code of name" value="{{code.marketId}}">{{code.marketName}}  -  {{code.SpecMarketCode}}</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-lg-4 col-md-4 col-sm-4 col-xs-12 newmarket-input"><label for="MarketTypeName">Market Type</label></div>
+                        <div class="col-lg-8 col-md-8 col-sm-8 col-xs-12">
+                            <div class="styled-select">
+                                <select [(ngModel)]="car.MarketTypeId" required name="MarketTypeId" id="MarketTypeId" ngModel class="form-control">
+                                    <option [ngValue]="select" disabled selected>--Select Market Type--</option>
+                                    <option *ngFor="let type of type" value="{{type.id}}">{{type.value}}</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                    <!--<div class="ui-grid-row">
+                        <div class="ui-grid-col-4 newmarket-input" style="width:220px"><label for="ParameterGroupName">EC Dependent Factor</label></div>
+                        <div class="ui-grid-col-10 styled-select">
+                            <select [(ngModel)]="car.ParameterGroupId" required name="ParameterGroupId" id="ParameterGroupId" ngModel class="form-control">
+                                <option [ngValue]="select" disabled selected>--Select EC Dependent Factor--</option>
+                                <option *ngFor="let param of parameter" value="{{param.id}}">{{param.value}}</option>
+                            </select>
+                        </div>
+                    </div>-->
+                    <div class="row">
+                        <div class="col-lg-4 col-md-4 col-sm-4 col-xs-12 newmarket-input"><label for="Year">Year</label></div>
+                        <div class="col-lg-8 col-md-8 col-sm-8 col-xs-12 newmarket-inputbox">
+                            <input (keypress)="_keyPress($event)" pInputText id="Year" placeholder="Provide Year" autocomplete="off" [(ngModel)]="car.Year" minlength="4" maxlength="4"
+                                   required [ngClass]="{'red-border-class': Year.hasError}" class="form-control"
+                                   name="Year"
+                                   #Year="ngModel">
+                            <div [hidden]="Year.valid || Year.pristine"
+                                 class="">
+                                <div class="my-notify-error"
+                                     [hidden]="!Year.hasError('required')">
+                                    Year is required
+                                </div>
+                                <div class="my-notify-error"
+                                     [hidden]="!Year.hasError('minlength')">
+                                    Minimum length 4
+                                </div>
+                                <div class="my-notify-error"
+                                     [hidden]="!Year.hasError('$event')">
+                                    Maximum 4 digits allowed
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <p-footer>
+                    <div class="ui-dialog-buttonpane ui-helper-clearfix">
+                        <div class="ui-helper-clearfix action-btn">
+                            <button type="button" pButton icon="fa-check" class="btn" (click)="save(car)" label="Save" [disabled]="!Form.form.valid"></button>
+                        </div>
+                    </div>
+                </p-footer>
+            </form>
+        </div>
+    </p-dialog>
+</div>
+<div *ngIf="showprimeupdate==true">
+    <p-dialog header="Delete Market Details" [(visible)]="displayDialog" [responsive]="true" showEffect="fade" [modal]="true">
+        <form (ngSubmit)="update()" #Form="ngForm">
+            <div class="form-group updateMarkDet">
+                <div class="row">
+                    <div class="col-lg-4 col-md-4 col-sm-4 col-xs-12 newmarket-input"><label for="MarketName">Market Name</label></div>
+                    <div class="col-lg-8 col-md-8 col-sm-8 col-xs-12">
+                        <div class="styled-select">
+                            <select [(ngModel)]="car.Marketid" required name="Marketid" id="Marketid" ngModel class="form-control">
+                                <option value="" disabled selected>--Select Market--</option>
+                                <option *ngFor="let code of name" value="{{code.marketId}}">{{code.marketName}}  -  {{code.SpecMarketCode}}</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-lg-4 col-md-4 col-sm-4 col-xs-12 newmarket-input"><label for="MarketTypeName">Market Type</label></div>
+                    <div class="col-lg-8 col-md-8 col-sm-8 col-xs-12">
+                        <div class="styled-select">
+                            <select [(ngModel)]="car.MarketTypeId" required name="MarketTypeId" id="MarketTypeId" ngModel class="form-control">
+                                <option value="" disabled selected>--Select Market Type--</option>
+                                <option *ngFor="let type of type" value="{{type.id}}">{{type.value}}</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+                <!--<div class="ui-grid-row">
+                    <div class="ui-grid-col-4 newmarket-input" style="width:220px"><label for="ParameterGroupName">EC Dependent Factor</label></div>
+                    <div class="ui-grid-col-10 styled-select">
+                        <select [(ngModel)]="car.ParameterGroupId" required name="ParameterGroupId" id="ParameterGroupId" ngModel class="form-control">
+                            <option value="" disabled selected>--Select EC Dependent Factor--</option>
+                            <option *ngFor="let param of parameter" value="{{param.id}}">{{param.value}}</option>
+                        </select>
+                    </div>
+                </div>-->
+                <div class="row">
+                    <div class="col-lg-4 col-md-4 col-sm-4 col-xs-12 newmarket-input"><label for="Year">Year</label></div>
+                    <div class="col-lg-8 col-md-8 col-sm-8 col-xs-12 newmarket-inputbox">
+                        <input (keypress)="_keyPress($event)" pInputText id="Year" placeholder="Provide Year" autocomplete="off" oncopy="return false" onpaste="return false"
+                               [(ngModel)]="car.Year" required minlength="4" maxlength="4" [ngClass]="{'red-border-class': Year.hasError}" class="form-control"
+                               name="Year"
+                               #Year="ngModel">
+
+                        <div [hidden]="Year.valid || Year.pristine"
+                             class="">
+                            <div class="my-notify-error"
+                                 [hidden]="!Year.hasError('required')">
+                                Year is required
+                            </div>
+                            <div class="my-notify-error"
+                                 [hidden]="!Year.hasError('minlength')">
+                                Minimum length 4
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <p-footer>
+                <div class="ui-dialog-buttonpane ui-helper-clearfix">
+                    <div class="ui-helper-clearfix action-btn">
+
+                        <button type="button" class="btn" pButton icon="fa-close" (click)="delete(car)" label="Delete" [disabled]="!Form.form.valid"></button>
+
+                    </div>
+                </div>
+            </p-footer>
+        </form>
+    </p-dialog>
+
+    <p-growl [value]="msgs" ></p-growl>
+
+    <p-confirmDialog></p-confirmDialog>
+</div>
+

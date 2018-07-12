@@ -1,0 +1,33 @@
+﻿<div class="sectioncontainer">
+    <div class="content">
+        <div>
+            <div class="main-content">
+                <div class="col-sm-12 col-xs-12">
+                    <div class="container-rightcontent">
+                        <div class="row modelTabs">
+                           
+                                <div class="tab-content">
+                                    <ul class="nav nav-tabs secondlevel-tab">
+                                        <!--<li class="active"><a data-toggle="tab" href="#modeltab1"> Add Market</a></li>-->
+                                        <!--<li><a data-toggle="tab" href="#modeltab2">Add Market Details</a></li>-->
+                                        <li *ngIf="Roleid=='1'"  class="active"><a (click)="Addmarket()" data-toggle="tab">Add Market</a></li>
+                                        <li *ngIf="Roleid=='2'"  class="active" ><a data-toggle="tab" (click)="Addmarketdetails()">Add Market Details</a></li>
+                                    </ul>
+
+                                </div>
+                               
+                                <div class="tab-content">
+                                    <div id="modeltab1" class="tab-pane fade in active ">
+                                        <router-outlet></router-outlet>
+                                    </div>
+        <!--div id="modeltab2" class="tab-pane fade ">
+            <marketdetails></marketdetails>
+        </div>-->
+    </div>
+                            </div>
+                        </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

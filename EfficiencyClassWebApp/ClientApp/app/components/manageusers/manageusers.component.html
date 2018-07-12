@@ -1,0 +1,169 @@
+﻿<p-dataTable [value]="userdetails" resizableColumns="true" selectionMode="single" [(selection)]="selectedCar" [responsive]="true" [rows]="10" sortField="CreatedOn" sortOrder="-1" [rowsPerPageOptions]="[10, 20,50]" [paginator]="true" #dt>
+
+    <p-column field="CDSID" header="CDSID" [filter]="false" filterPlaceholder="Search Market" [sortable]="false"></p-column>
+
+    <p-column field="userName" header="Name" [filter]="false" filterPlaceholder="Search Type" [sortable]="false"></p-column>
+
+    <p-column field="email" header="Email" [filter]="false" [sortable]="false"></p-column>
+
+    <p-column field="marketNames" header="Markets" [filter]="false" [sortable]="false"></p-column>
+
+    <p-column field="CreatedBy" header="Created By" [sortable]="false" [filter]="false" filterPlaceholder="Search"></p-column>
+
+    <p-column field="CreatedOn" header="Created On " [sortable]="false" [style]="{'width':'200px'}" [filter]="false" filterPlaceholder="Search">
+        <ng-template let-row="rowData" pTemplate="body">
+            {{row.CreatedOn | date}}
+        </ng-template>
+    </p-column>
+
+    <p-column field="UpdatedBy" header="Updated By " [sortable]="false" [filter]="false" filterPlaceholder="Search"></p-column>
+
+    <p-column field="UpdatedOn" header="Updated On" [sortable]="false" [style]="{'width':'200px'}" [filter]="false" filterPlaceholder="Search">
+        <ng-template let-row="rowData" pTemplate="body">
+            {{row.UpdatedOn | date}}
+        </ng-template>
+    </p-column>
+    <p-column header="Edit" [style]="{'width':'80px'}">
+        <ng-template let-col let-carT="rowData" pTemplate type="body">
+            <button class="edit" type="button" pButton icon="fa-edit" pTooltip="edit this row" tooltipPosition="top" (click)="showDialogToEdit(carT)"></button>
+        </ng-template>
+    </p-column>
+
+    <p-footer>
+        <div class="ui-helper-clearfix action-btn" style="width:100%">
+            <button type="button" pButton icon="fa-plus" class="btn" style="float:left" (click)="showDialogToAdd()" label="Add New User"></button>
+        </div>
+    </p-footer>
+</p-dataTable>
+<div *ngIf="showprimesave==true">
+    <p-dialog header="Add User Details" [(visible)]="displayDialog" [responsive]="true" showEffect="fade" [modal]="true">
+        <div class="ui-grid ui-grid-responsive ui-fluid" style="width:500px;height:350px;" *ngIf="car">
+            <form (ngSubmit)="save()" #Form="ngForm">
+                <div class="form-group">
+                    <div class="row">
+                        <div class="col-lg-4 col-md-4 col-sm-4 col-xs-12 newmarket-input"><label for="CDSID">CDSID</label></div>
+                        <div class="col-lg-8 col-md-8 col-sm-8 col-xs-12">
+                            <input (keypress)="_keyPressSymbols($event)" pInputText id="CDSID" maxlength="10" placeholder="Provide CDSID" autocomplete="off" [(ngModel)]="car.CDSID"
+                                  required class="form-control"
+                                   name="CDSID" #CDSID="ngModel">
+                            <div [hidden]="CDSID.valid || CDSID.untouched">
+                                <div class="my-notify-error" *ngIf="CDSID.errors && CDSID.errors.required">
+                                    CDSID is required
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-lg-4 col-md-4 col-sm-4 col-xs-12 newmarket-input"><label for="Year">Name</label></div>
+                        <div class="col-lg-8 col-md-8 col-sm-8 col-xs-12">
+                            <input (keypress)="_keyPressSymbols($event)" pInputText id="userName" maxlength="50" placeholder="Provide userName" autocomplete="off" [(ngModel)]="car.userName"
+                                  required class="form-control"
+                                   name="userName" #userName="ngModel">
+                            <div [hidden]="userName.valid || userName.untouched">
+                                <div class="my-notify-error" *ngIf="userName.errors && userName.errors.required">
+                                    Name is required
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-lg-4 col-md-4 col-sm-4 col-xs-12 newmarket-input"><label for="email">Email</label></div>
+                        <div class="col-lg-8 col-md-8 col-sm-8 col-xs-12">
+                            <input (keypress)="_keyPress($event)" pInputText id="email" maxlength="70" placeholder="Provide Email" autocomplete="off" [(ngModel)]="car.email"
+                                   required class="form-control"
+                                   name="email" #email="ngModel" pattern="^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{3})+$">
+                            <div [hidden]="email.valid || email.untouched">
+                                <div class="my-notify-error" *ngIf="email.errors && email.errors.required">
+                                    Email is required
+                                </div>
+                                <div class="my-notify-error" *ngIf="email.errors && email.errors.pattern">
+                                    Email is invalid
+                                </div>
+                            </div>
+                        </div>
+                    </div>                                      
+                    <div class="row">
+        <div class="col-lg-4 col-md-4 col-sm-4 col-xs-12 newmarket-input"><label for="marketNames">Markets</label></div>
+        <div class="col-lg-8 col-md-8 col-sm-8 col-xs-12" style="overflow:visible">
+
+            <p-multiSelect  [options]="dropdownlist" [(ngModel)]="selectedCars1" required  name="checkbox"></p-multiSelect>
+        </div>
+    </div>                   
+                </div>
+                <p-footer>
+                    <div class="ui-dialog-buttonpane ui-helper-clearfix">
+                        <div class="ui-helper-clearfix action-btn">
+                            <button type="button" pButton icon="fa-check" class="btn" (click)="save(car,selectedCars1)" label="Save" [disabled]="!Form.form.valid"></button>
+                        </div>
+                    </div>
+                </p-footer>
+            </form>
+        </div>
+    </p-dialog>
+</div>
+<div *ngIf="showprimeupdate==true">
+    <p-dialog header="Update or Delete User Details" [(visible)]="displayDialog" [responsive]="true" showEffect="fade" [modal]="true">
+        <div class="ui-grid ui-grid-responsive ui-fluid" style="width:500px;height:350px;" *ngIf="car">
+            <form (ngSubmit)="update()" #Form="ngForm">
+                <div class="form-group">
+                    <div class="row">
+                        <div class="col-lg-4 col-md-4 col-sm-4 col-xs-12 newmarket-input"><label for="CDSID">CDSID</label></div>
+                        <div class="col-lg-8 col-md-8 col-sm-8 col-xs-12">
+                            <input (keypress)="_keyPressSymbols($event)" pInputText id="CDSID" maxlength="10" placeholder="Provide CDSID" autocomplete="off" [(ngModel)]="car.CDSID"
+                                   required class="form-control"
+                                   name="CDSID" #CDSID="ngModel">
+                            <div [hidden]="CDSID.valid || CDSID.untouched">
+                                <div class="my-notify-error" *ngIf="CDSID.errors && CDSID.errors.required">
+                                    CDSID is required
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-lg-4 col-md-4 col-sm-4 col-xs-12 newmarket-input"><label for="Year">Name</label></div>
+                        <div class="col-lg-8 col-md-8 col-sm-8 col-xs-12">
+                            <input (keypress)="_keyPressSymbols($event)" pInputText id="userName" maxlength="50" placeholder="Provide userName" autocomplete="off" [(ngModel)]="car.userName"
+                                   required class="form-control"
+                                   name="userName" #userName="ngModel">
+                            <div [hidden]="userName.valid || userName.untouched">
+                                <div class="my-notify-error" *ngIf="userName.errors && userName.errors.required">
+                                    Name is required
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-lg-4 col-md-4 col-sm-4 col-xs-12 newmarket-input"><label for="email">Email</label></div>
+                        <div class="col-lg-8 col-md-8 col-sm-8 col-xs-12">
+                            <input (keypress)="_keyPress($event)" pInputText id="email" maxlength="70" placeholder="Provide Email" autocomplete="off" [(ngModel)]="car.email"
+                                   required class="form-control"
+                                   name="email" #email="ngModel" pattern="^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{3})+$">
+                            <div [hidden]="email.valid || email.untouched">
+                                <div class="my-notify-error" *ngIf="email.errors && email.errors.required">
+                                    Email is required
+                                </div>
+                                <div class="my-notify-error" *ngIf="email.errors && email.errors.pattern">
+                                    Email is invalid
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-lg-4 col-md-4 col-sm-4 col-xs-12 newmarket-input"><label for="marketNames">Markets</label></div>
+                        <div class="col-lg-8 col-md-8 col-sm-8 col-xs-12">
+                            <p-multiSelect [options]="dropdownlist" [(ngModel)]="selectedCars1" required name="checkbox"></p-multiSelect>
+                        </div>
+                    </div>
+                </div>
+                <p-footer>
+                    <div class="ui-dialog-buttonpane ui-helper-clearfix">
+                        <div class="ui-helper-clearfix action-btn">
+                            <button type="button" pButton icon="fa-check" class="btn" (click)="update(car,selectedCars1)" label="Update" [disabled]="!Form.form.valid"></button>
+                            <button type="button" class="btn" pButton icon="fa-close" (click)="delete(car)" label="Delete" [disabled]="!Form.form.valid"></button>
+                        </div>
+                    </div>
+                </p-footer>
+            </form>
+        </div>
+    </p-dialog>
+</div>

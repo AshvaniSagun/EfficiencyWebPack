@@ -1,0 +1,187 @@
+﻿<p-dataTable [value]="variabledetails" [rowStyleClass]="lookupRowStyleClass" sortField="CreatedOn" sortOrder="-1" resizableColumns="true" selectionMode="single" [(selection)]="selectedCar"  [responsive]="true" [rowsPerPageOptions]="[10, 20,50]" [rows]="10" [paginator]="true" #dt>
+
+    <p-column field="VariableName" header="Variable Name " [filter]="false" [sortable]="false" filterPlaceholder="Search"></p-column>
+    <p-column field="VariableValue" header="Variable Value" [filter]="false" [sortable]="false"></p-column>
+    <p-column field="VariableTypeName" header="Variable Type " [filter]="false" filterPlaceholder="Search" [sortable]="false"></p-column>
+    <p-column field="CreatedBy" header="Created By" [sortable]="false" [filter]="false" filterPlaceholder="Search"></p-column>
+    <p-column field="CreatedOn" header="Created On " [sortable]="false" [style]="{'width':'200px'}" [filter]="false" filterPlaceholder="Search">
+        <ng-template let-row="rowData" pTemplate="body">
+            {{row.CreatedOn | date}}
+        </ng-template>
+    </p-column>
+    <p-column field="UpdatedBy" header="Updated By " [sortable]="false" [filter]="false" filterPlaceholder="Search"></p-column>
+    <p-column field="UpdatedOn" header="Updated On" [sortable]="false" [style]="{'width':'200px'}" [filter]="false" filterPlaceholder="Search">
+        <ng-template let-row="rowData" pTemplate="body">
+            {{row.UpdatedOn | date}}
+        </ng-template>
+    </p-column>
+    <p-column  header="Edit" [style]="{'width':'80px'}">
+        <ng-template let-col let-carT="rowData" pTemplate type="body">
+            <button class="edit" type="button" *ngIf="carT.isPublished==true" [disabled]="showeditbutton"  pButton icon="fa-edit" pTooltip="edit this row" tooltipPosition="top" (click)="showDialogToEdit(carT)"></button>
+            <button class="edit" type="button" *ngIf="carT.isPublished==false"  pButton icon="fa-edit" pTooltip="edit this row" tooltipPosition="top" (click)="showDialogToEdit(carT)"></button>
+        </ng-template>
+    </p-column>
+    <p-footer>
+        <div class="ui-helper-clearfix action-btn" style="width:100%">
+            <button type="button" pButton icon="fa-plus" class="btn" style="float:left" (click)="showDialogToAdd()" label="Add Variable"></button>
+        </div>
+    </p-footer>
+</p-dataTable>
+<div *ngIf="showprimesave==true">
+    <p-dialog header="Add Variable" [(visible)]="displayDialog" [responsive]="true" showEffect="fade" [modal]="true">
+        <div class="ui-grid ui-grid-responsive ui-fluid" *ngIf="car">
+            <form (ngSubmit)="save()" #Form="ngForm">
+                <div class="form-group">
+                    <div class="row">
+                        <div class="col-lg-4 col-md-4 col-sm-4 col-xs-12 newmarket-input"><label for="VariableTypeName">Variable Type</label></div>
+                        <div class="col-lg-8 col-md-8 col-sm-8 col-xs-12">
+                            <div class="styled-select">
+                                <select [(ngModel)]="car.VariableTypeId" (ngModelChange)="editVariable(car)" required name="VariableTypeId" id="VariableTypeId" ngModel class="form-control">
+                                    <option [ngValue]="select" disabled [selected]="true">--Select Variable Type--</option>
+                                    <option *ngFor="let type of type" value="{{type.id}}">{{type.value}}</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div *ngIf="showinputdata==true">
+                            <div class="col-lg-4 col-md-4 col-sm-4 col-xs-12 newmarket-input"><label for="VariableName">Variable Name</label></div>
+                            <div class="col-lg-8 col-md-8 col-sm-8 col-xs-12">
+                                <div class="styled-select">
+                                    <select [(ngModel)]="car.VariableName" required name="VariableName" id="VariableName" ngModel class="form-control">
+                                        <option value="" disabled selected>--Select Input Variable Name--</option>
+                                        <option *ngFor="let type of input" value="{{type.value}}">{{type.value}}</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                        </div>
+                    <div class="row">
+                        <div *ngIf="showtextbox==true">
+                            <div class="col-lg-4 col-md-4 col-sm-4 col-xs-12 newmarket-input"><label for="VariableName">Variable Name</label></div>
+                            <div class="col-lg-8 col-md-8 col-sm-8 col-xs-12 newmarket-inputbox">
+                                <input pInputText id="VariableNameText" maxlength="20" placeholder="Provide Variable Name" autocomplete="off" [(ngModel)]="car.VariableName"
+                                 required [ngClass]="{'red-border-class': VariableName.hasError}" class="form-control"
+                                       name="VariableName"
+                                       #VariableName="ngModel">
+                                <div [hidden]="VariableName.valid || VariableName.pristine"
+                                     class="">
+                                    <div class="my-notify-error"
+                                         [hidden]="!VariableName.hasError('required')">
+                                        Variable Name is required
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        </div>
+                    <div class="row">
+                            <div *ngIf="showfueldata==true">
+                                <div class="col-lg-4 col-md-4 col-sm-4 col-xs-12 newmarket-input"><label for="VariableName">Variable Name</label></div>
+                                <div class="col-lg-8 col-md-8 col-sm-8 col-xs-12 ">
+                                    <div class="styled-select">
+                                        <select [(ngModel)]="car.VariableName" required name="VariableName" id="VariableName" ngModel class="form-control">
+                                            <option value="" disabled selected>--Select Fuel Type Variable Name--</option>
+                                            <option *ngFor="let cv of fuel" value="{{cv.value}}">{{cv.value}}</option>
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    <div class="row">
+                            <div class="col-lg-4 col-md-4 col-sm-4 col-xs-12 newmarket-input"><label for="VariableValue">Variable Value</label></div>
+                            <div class="col-lg-8 col-md-8 col-sm-8 col-xs-12 newmarket-inputbox">
+                                <input (keypress)="_keyPress($event)" maxlength="30" pInputText id="VariableValue" placeholder="Provide Variable Value" autocomplete="off" [(ngModel)]="car.VariableValue"
+                              [ngClass]="{'red-border-class': VariableValue.hasError}" class="form-control"
+                                       name="VariableValue"
+                                       #VariableValue="ngModel">
+
+                            </div>
+                        </div>
+                    </div>
+                    <p-footer>
+                        <div class="ui-dialog-buttonpane ui-helper-clearfix">
+                            <div class="ui-helper-clearfix action-btn">
+                                <button type="button" pButton icon="fa-check" class="btn" (click)="save(car)" [disabled]="!Form.form.valid" label="Save"></button>
+                            </div>
+                        </div>
+                    </p-footer>
+</form>
+        </div>
+    </p-dialog>
+        </div>
+<div *ngIf="showprimeupdate==true">
+            <p-dialog header="Update or Delete Variable " [(visible)]="displayDialog" [responsive]="true" showEffect="fade" [modal]="true">
+                <div class="ui-grid ui-grid-responsive ui-fluid" *ngIf="car">
+                    <form (ngSubmit)="save()" #Form="ngForm">
+                        <div class="form-group">
+                            <div class="row">
+                                <div class="col-lg-4 col-md-4 col-sm-4 col-xs-12 newmarket-input"><label for="VariableTypeName">Variable Type</label></div>
+                                <div class="col-lg-8 col-md-8 col-sm-8 col-xs-12">
+                                    <div class="styled-select">
+                                        <select [(ngModel)]="car.VariableTypeId" (ngModelChange)="editVariable(car)" required name="VariableTypeId" id="VariableTypeId" ngModel class="form-control">
+                                            <option [ngValue]="select" disabled [selected]="true">--Select Variable Type--</option>
+                                            <option *ngFor="let type of type" value="{{type.id}}">{{type.value}}</option>
+                                        </select>
+                                    </div>
+                                </div>
+                                </div>
+                            <div *ngIf="showinputdata==true" class="row">
+                                <div class="col-lg-4 col-md-4 col-sm-4 col-xs-12 newmarket-input"><label for="VariableName">Variable Name</label></div>
+                                <div class="col-lg-8 col-md-8 col-sm-8 col-xs-12">
+                                    <div class="styled-select">
+                                        <select [(ngModel)]="car.VariableName" required name="VariableName" id="VariableName" ngModel class="form-control">
+                                            <option value="" disabled selected>--Select Input Variable Name--</option>
+                                            <option *ngFor="let type of input" value="{{type.value}}">{{type.value}}</option>
+                                        </select>
+                                    </div>
+                                </div>
+                                </div>
+                            <div *ngIf="showtextbox==true" class="row">
+                                <div class="col-lg-4 col-md-4 col-sm-4 col-xs-12 newmarket-input"><label for="VariableName">Variable Name</label></div>
+                                <div class="col-lg-8 col-md-8 col-sm-8 col-xs-12 newmarket-inputbox">
+                                    <input pInputText id="VariableNameText" maxlength="20" placeholder="Provide Variable Name" autocomplete="off" [(ngModel)]="car.VariableName"
+                                        required [ngClass]="{'red-border-class': VariableName.hasError}" class="form-control"
+                                           name="VariableName"
+                                           #VariableName="ngModel">
+                                    <div [hidden]="VariableName.valid || VariableName.pristine"
+                                         class="">
+                                        <div class="my-notify-error"
+                                             [hidden]="!VariableName.hasError('required')">
+                                            Variable Name is required
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div *ngIf="showfueldata==true" class="row">
+                                <div class="col-lg-4 col-md-4 col-sm-4 col-xs-12 newmarket-input"><label for="VariableName">Variable Name</label></div>
+                                <div class="col-lg-8 col-md-8 col-sm-8 col-xs-12">
+                                    <div class="styled-select">
+                                        <select [(ngModel)]="car.VariableName" required name="VariableName" id="VariableName" ngModel class="form-control">
+                                            <option value="" disabled selected>--Select Fuel Type Variable Name--</option>
+                                            <option *ngFor="let cv of fuel" value="{{cv.value}}">{{cv.value}}</option>
+                                        </select>
+                                    </div>
+                                </div>
+                                </div>
+                            <div class="row">
+                                <div class="col-lg-4 col-md-4 col-sm-4 col-xs-12 newmarket-input"><label for="VariableValue">Variable Value</label></div>
+                                <div class="col-lg-8 col-md-8 col-sm-8 col-xs-12 newmarket-inputbox">
+                                    <input (keypress)="_keyPress($event)" maxlength="30" pInputText id="VariableValue" placeholder="Provide Variable Value" autocomplete="off" [(ngModel)]="car.VariableValue"
+                                           [ngClass]="{'red-border-class': VariableValue.hasError}" class="form-control"
+                                           name="VariableValue"
+                                           #VariableValue="ngModel">                                   
+                                </div>
+                            </div>
+                        </div>
+                        <p-footer>
+                            <div class="ui-dialog-buttonpane ui-helper-clearfix">
+                                <div class="ui-helper-clearfix action-btn">
+                                    <button type="button" pButton icon="fa-check" class="btn" (click)="update(car)" label="Update" [disabled]="!Form.form.valid"></button>
+                                    <button type="button" pButton icon="fa-close" class="btn" (click)="delete(car)" label="Delete" [disabled]="!Form.form.valid"></button>
+                                </div>
+                            </div>
+                        </p-footer>
+                    </form>
+                </div>
+          </p-dialog>
+        </div>

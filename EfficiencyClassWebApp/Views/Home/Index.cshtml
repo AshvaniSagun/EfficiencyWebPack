@@ -1,0 +1,29 @@
+@{
+    ViewData["Title"] = "Home Page";
+}
+<style>
+    #loading {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        margin-top: -50px;
+        margin-left: -50px;
+        width: 100px;
+        height: 100px;
+    }
+</style>
+
+@*<app asp-prerender-module="ClientApp/dist/main-server">Loading...</app>*@
+<app asp-ng2-prerender-module="ClientApp/dist/main-server"><div id="loading">
+    <img src="~/content/images/769.gif" /><br />
+    &nbsp; <b style="color:blue">Loading...</b>
+</div></app>
+
+<script src="~/dist/vendor.js" asp-append-version="true"></script>
+@section scripts {
+    <script src="~/dist/main-client.js" asp-append-version="true"></script>
+<script src="~/content/js/jquery-3.2.1.min.js"></script>
+
+<script src="~/content/js/bootstrap.min.js"></script>
+
+}
