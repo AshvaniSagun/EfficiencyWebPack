@@ -12,8 +12,7 @@ const MarketRoutes: Routes = [
        component: ManageComponent, canActivate: [LoggedInGuard],
 
        children: [
-           //{ path: '', component: AdminComponent, canActivate: [LoggedInGuard] },
-       
+          
            {
                path: 'admintable',
                component: AdminComponent, canActivate: [LoggedInGuard]
